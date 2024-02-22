@@ -1,0 +1,40 @@
+name: Simple Manual Workflow
+
+on:  
+# Allow you to run this workflow manually from the Actions tab
+     workflow_dispatch:
+
+jobs:
+     dev:
+     # The type of runner that the job will run on
+          runs-on: ubuntu-latest
+          environment: dev
+          steps:
+           - uses: actions/checkout@v2
+           - name: Run a script
+             run: | 
+               echo "I am running a job in the dev environment"
+
+     staging:
+          runs-on: ubuntu-latest
+          environment: staging
+          needs: dev
+
+          steps:
+           - uses: actions/checkout@v2
+           - name: Run a script
+             run: | 
+               echo "I am running a job in the staging environment"
+
+     prod:
+          runs-on: ubuntu-latest
+          environment: prod
+          needs: staging
+          
+          steps:
+           - uses: actions/checkout@v2
+           - name: Run a script
+             run: | 
+               echo "I am running a job in the prod environment"
+
+
