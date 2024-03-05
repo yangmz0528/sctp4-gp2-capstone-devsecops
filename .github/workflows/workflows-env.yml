@@ -36,5 +36,3 @@ jobs:
            - name: Run a script
              run: | 
                echo "I am running a job in the prod environment"
-
-
