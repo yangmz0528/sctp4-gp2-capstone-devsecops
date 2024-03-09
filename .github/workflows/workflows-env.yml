@@ -2,15 +2,15 @@ name: Simple Workflow
 
 on:  
   push: 
-     branches: ["dev", "staging", "environment"]
+     branches: ["dev", "main"]
      
 
 env:                 
-  ECR_REPOSITORY: mingzi-ecr       
-  ECS_SERVICE: mingzi-ecs-http         
-  ECS_CLUSTER: mingzi-ecs                    
-  CONTAINER_NAME: ecs-sample
-  TASKDEF: mingzi-ecs-http
+  ECR_REPOSITORY: group2-ecr       
+  ECS_SERVICE: group2-ecs-http         
+  ECS_CLUSTER: group2-ecs                    
+  CONTAINER_NAME: ecs-group2-py
+  TASKDEF: group2-ecs-http
 
 jobs:
   dev:
@@ -22,10 +22,35 @@ jobs:
     - name: Run a script
       run: echo "I am running a job in the ${{ github.ref }} environment"
 
-    # Build, tag deploy image to ECR
+    # Build, tag image.
 
     - name: Checkout
       uses: actions/checkout@v2
+
+
+    - name: Build, tag image
+      id: build-image
+      env:
+        IMAGE_TAG: ${{ github.sha }}
+      run: |
+        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -t $ECR_REGISTRY/$ECR_REPOSITORY:latest .
+        echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
+
+      # Run Trivy Scan
+        
+    - name: Run Trivy Scan
+      uses: aquasecurity/trivy-action@master
+      with:
+        image-ref: ${{ github.sha }}
+        format: 'json'
+        output: 'trivy-results.json'
+
+    - name: Upload Trivy scan results to GitHub Security tab
+      uses: github/codeql-action/upload-sarif@v2
+      with:
+        json_file: 'trivy-results.json'
+
+  # Deploy to ECR, ECR to ECS
 
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v1
@@ -37,16 +62,6 @@ jobs:
     - name: Login to Amazon ECR
       id: login-ecr
       uses: aws-actions/amazon-ecr-login@v1
-
-    - name: Build, tag, and push image to Amazon ECR
-      id: build-image
-      env:
-        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        IMAGE_TAG: ${{ github.sha }}
-      run: |
-        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -t $ECR_REGISTRY/$ECR_REPOSITORY:latest .
-        docker push $ECR_REGISTRY/$ECR_REPOSITORY -a
-        echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
     
     - name: Download task definition
       run: |
@@ -67,21 +82,7 @@ jobs:
         service: ${{ env.ECS_SERVICE }}
         cluster: ${{ env.ECS_CLUSTER }}
         wait-for-service-stability: true
-    
-    # Run Trivy Scan
-        
-    - name: Run Trivy Scan
-      uses: aquasecurity/trivy-action@master
-      with:
-        image-ref: ${{ github.sha }}
-        format: 'json'
-        output: 'trivy-results.json'
 
-    - name: Upload Trivy scan results to GitHub Security tab
-      uses: github/codeql-action/upload-sarif@v2
-      with:
-        json_file: 'trivy-results.json'
-          
     
     #  staging:
     #       runs-on: ubuntu-latest
