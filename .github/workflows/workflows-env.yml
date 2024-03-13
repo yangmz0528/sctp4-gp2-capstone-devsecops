@@ -1,42 +1,113 @@
-name: capcstone project group 2 Workflow
+name: Simple Workflow
 
 on:  
-push:
-  branches:  [ dev, "*"]
-# Allow you to run this workflow manually from the Actions tab
-     workflow_dispatch:
+  push: 
+     branches: ["dev", "main"]
+     
+
+env:                 
+  ECR_REPOSITORY: group2-ecr       
+  ECS_SERVICE: group2-ecs-http         
+  ECS_CLUSTER: group2-ecs                    
+  CONTAINER_NAME: ecs-group2-py
+  TASKDEF: group2-ecs-http
 
 jobs:
-     dev:
+  dev:
      # The type of runner that the job will run on
-          runs-on: ubuntu-latest
-          environment: dev
-          steps:
-           - uses: actions/checkout@v2
-           - name: Run a script
-             run: | 
-               echo "I am running a job in the dev environment"
+    runs-on: ubuntu-latest
+    environment: ${{ github.ref_name }}
+    steps:
+    - uses: actions/checkout@v2
+    - name: Run a script
+      run: echo "I am running a job in the ${{ github.ref }} environment"
 
-     staging:
-          runs-on: ubuntu-latest
-          environment: staging
-          needs: dev
+    # Build, tag image.
 
-          steps:
-           - uses: actions/checkout@v2
-           - name: Run a script
-             run: | 
-               echo "I am running a job in the staging environment"
+    - name: Checkout
+      uses: actions/checkout@v2
 
-     prod:
-          runs-on: ubuntu-latest
-          environment: prod
-          needs: staging
+
+    - name: Build, tag image
+      id: build-image
+      env:
+        IMAGE_TAG: ${{ github.sha }}
+      run: |
+        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -t $ECR_REGISTRY/$ECR_REPOSITORY:latest .
+        echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
+
+      # Run Trivy Scan
+        
+    - name: Run Trivy Scan
+      uses: aquasecurity/trivy-action@master
+      with:
+        image-ref: ${{ github.sha }}
+        format: 'json'
+        output: 'trivy-results.json'
+
+    - name: Upload Trivy scan results to GitHub Security tab
+      uses: github/codeql-action/upload-sarif@v2
+      with:
+        json_file: 'trivy-results.json'
+
+  # Deploy to ECR, ECR to ECS
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ vars.AWS_REGION }}
+        
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v1
+    
+    - name: Download task definition
+      run: |
+        aws ecs describe-task-definition --task-definition $TASKDEF --query taskDefinition > task-definition.json
+
+    - name: Fill in the new image ID in the Amazon ECS task definition
+      id: task-def
+      uses: aws-actions/amazon-ecs-render-task-definition@v1
+      with:
+        task-definition: task-definition.json
+        container-name: ${{ env.CONTAINER_NAME }}
+        image: ${{ steps.build-image.outputs.image }}
+
+    - name: Deploy Amazon ECS task definition
+      uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+      with:
+        task-definition: ${{ steps.task-def.outputs.task-definition }}
+        service: ${{ env.ECS_SERVICE }}
+        cluster: ${{ env.ECS_CLUSTER }}
+        wait-for-service-stability: true
+
+    
+    #  staging:
+    #       runs-on: ubuntu-latest
+    #       environment: staging
+    #       needs: dev
+
+    #       steps:
+    #        - uses: actions/checkout@v2
+    #        - name: Run a script
+    #          run: | 
+    #            echo "I am running a job in the staging environment"
+
+    #       - name: image-scan
+
+    #  prod:
+    #       runs-on: ubuntu-latest
+    #       environment: prod
+    #       needs: staging
           
-          steps:
-           - uses: actions/checkout@v2
-           - name: Run a script
-             run: | 
-               echo "I am running a job in the prod environment"
+    #       steps:
+    #        - uses: actions/checkout@v2
+    #        - name: Run a script
+    #          run: | 
+    #            echo "I am running a job in the prod environment"
+      
+     
 
 
