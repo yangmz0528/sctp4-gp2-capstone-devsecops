@@ -1,6 +1,8 @@
-name: Simple Manual Workflow
+name: capcstone project group 2 Workflow
 
 on:  
+push:
+  branches:  [ dev, "*"]
 # Allow you to run this workflow manually from the Actions tab
      workflow_dispatch:
 
