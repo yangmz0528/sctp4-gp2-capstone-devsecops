@@ -50,6 +50,18 @@ jobs:
       with:
         json_file: 'trivy-results.json'
 
+# run snky scan
+    - name: Snyk Security Scan for capstone project
+      steps:
+        uses: actions/checkout@master
+        name: Run Snyk to check for vulnerabilities
+        uses: snyk/actions/node@master
+        env:
+         SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+         command: monitor
+         args: --severity-threshold=high
+
   # Deploy to ECR, ECR to ECS
 
     - name: Configure AWS credentials
