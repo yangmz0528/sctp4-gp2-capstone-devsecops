@@ -39,10 +39,10 @@ jobs:
     # Create ECR repo, ECS cluster
 
     - name: Create ECR repository
-      run: aws ecr create-repository --repository ${{ env.ECR_REPOSITORY }}
+      run: aws ecr create-repository --repository-name ${{ env.ECR_REPOSITORY }}
 
     - name: Create ECS cluster
-      run: aws ecs create-cluster --repository ${{ env.ECR_CLUSTER }}
+      run: aws ecs create-cluster --cluster-name ${{ env.ECR_CLUSTER }}
 
     - name: Build, tag image
       id: build-image
