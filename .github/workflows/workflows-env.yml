@@ -4,7 +4,7 @@ on:
   push: 
      branches: 
       - dev 
-      - ${{github.ref}} 
+      - jody/trivy
     
 env:                 
   ECR_REPOSITORY: group2-ecr       
