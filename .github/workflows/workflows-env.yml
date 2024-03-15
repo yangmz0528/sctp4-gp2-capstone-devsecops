@@ -2,7 +2,7 @@ name: Dev Workflow
 
 on:  
   push: 
-     branches: ["dev", ${{github.ref}} ]
+     branches: ["dev", "${{github.ref}}" ]
     
 env:                 
   ECR_REPOSITORY: group2-ecr       
