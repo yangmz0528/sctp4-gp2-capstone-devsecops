@@ -20,7 +20,7 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v2
-      run: echo "I am running a job in the ${{ github.ref }} environment"
+    - run: echo "I am running a job in the ${{ github.ref }} environment"
 
     # Build, tag image, deploy to ECR, ECR to ECS.
 
