@@ -22,11 +22,21 @@ jobs:
     - name: Run a script
       run: echo "I am running a job in the ${{ github.ref }} environment"
 
-    # Build, tag image.
+    # Build, tag image, deploy to ECR, ECR to ECS.
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ vars.AWS_REGION }}
+        
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v1
 
     - name: Checkout
       uses: actions/checkout@v2
-
 
     - name: Build, tag image
       id: build-image
@@ -34,9 +44,10 @@ jobs:
         IMAGE_TAG: ${{ github.sha }}
       run: |
         docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -t $ECR_REGISTRY/$ECR_REPOSITORY:latest .
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY -a
         echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
 
-      # Run Trivy Scan
+    # Run Trivy Scan
         
     - name: Run Trivy Scan
       uses: aquasecurity/trivy-action@master
@@ -50,7 +61,7 @@ jobs:
       with:
         json_file: 'trivy-results.json'
 
-# run snky scan
+    # run snky scan
     - name: Snyk Security Scan for capstone project
       steps:
         uses: actions/checkout@master
@@ -62,19 +73,8 @@ jobs:
          command: monitor
          args: --severity-threshold=high
 
-  # Deploy to ECR, ECR to ECS
+    # ECR to ECS
 
-    - name: Configure AWS credentials
-      uses: aws-actions/configure-aws-credentials@v1
-      with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: ${{ vars.AWS_REGION }}
-        
-    - name: Login to Amazon ECR
-      id: login-ecr
-      uses: aws-actions/amazon-ecr-login@v1
-    
     - name: Download task definition
       run: |
         aws ecs describe-task-definition --task-definition $TASKDEF --query taskDefinition > task-definition.json
