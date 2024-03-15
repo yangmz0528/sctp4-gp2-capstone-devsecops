@@ -54,7 +54,7 @@ jobs:
         image-ref: ${{ env.image }}
         format: 'table'
         vuln-type: 'os,library'
-        severity: 'critical,high'
+        severity: 'CRITICAL,HIGH'
 
     # Run Snyk scan, threshold set to high
 
