@@ -18,7 +18,7 @@ jobs:
     runs-on: ubuntu-latest
     environment: ${{ github.ref_name }}
     steps:
-    - name: Run a script
+    - name: Checkout
       uses: actions/checkout@v2
       run: echo "I am running a job in the ${{ github.ref }} environment"
 
@@ -34,9 +34,6 @@ jobs:
     - name: Login to Amazon ECR
       id: login-ecr
       uses: aws-actions/amazon-ecr-login@v1
-
-    - name: Checkout
-      uses: actions/checkout@v2
 
     - name: Build, tag image
       id: build-image
@@ -61,10 +58,8 @@ jobs:
       with:
         json_file: 'trivy-results.json'
 
-    # run snky scan
-    - name: Snyk Security Scan for capstone project
-      uses: actions/checkout@master
-      
+    # Run Snyk scan, threshold set to high
+
     - name: Run Snyk to check for vulnerabilities
       uses: snyk/actions/node@master
       env:
