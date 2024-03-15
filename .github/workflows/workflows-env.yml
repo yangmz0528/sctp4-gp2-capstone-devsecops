@@ -66,8 +66,6 @@ jobs:
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: ${{ env.AWS_REGION }}
 
-    # Run Snyk scan, threshold set to high
-
     - name: Run Snyk to check for vulnerabilities
       uses: snyk/actions/node@master
       env:
