@@ -58,7 +58,7 @@ jobs:
     - name: Upload Trivy scan results to GitHub Security tab
       uses: github/codeql-action/upload-sarif@v2
       with:
-        json_file: 'trivy-results.sarif'
+        sarif_file: 'trivy-results.sarif'
 
     # Run Snyk scan, threshold set to high
 
