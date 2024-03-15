@@ -56,6 +56,7 @@ jobs:
   # Run the security scans
   security-scans:      
     runs-on: ubuntu-latest
+    needs: build-image
     steps:
     - name: Trivy Image Scan
       uses: aquasecurity/trivy-action@master
