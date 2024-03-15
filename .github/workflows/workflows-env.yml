@@ -18,8 +18,8 @@ jobs:
     runs-on: ubuntu-latest
     environment: ${{ github.ref_name }}
     steps:
-    - uses: actions/checkout@v2
     - name: Run a script
+      uses: actions/checkout@v2
       run: echo "I am running a job in the ${{ github.ref }} environment"
 
     # Build, tag image, deploy to ECR, ECR to ECS.
@@ -63,13 +63,13 @@ jobs:
 
     # run snky scan
     - name: Snyk Security Scan for capstone project
-      steps:
-        uses: actions/checkout@master
-        name: Run Snyk to check for vulnerabilities
-        uses: snyk/actions/node@master
-        env:
+      uses: actions/checkout@master
+      
+    - name: Run Snyk to check for vulnerabilities
+      uses: snyk/actions/node@master
+      env:
          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-        with:
+      with:
          command: monitor
          args: --severity-threshold=high
 
