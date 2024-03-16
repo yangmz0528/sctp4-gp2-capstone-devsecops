@@ -12,6 +12,7 @@ env:
   AWS_REGION: ap-southeast-1
 
 jobs:
+  # Build, tag image and store it in ECR
   build-image-ecr:
     runs-on: ubuntu-latest
     environment: ${{ github.ref_name }}
