@@ -18,7 +18,7 @@ jobs:
   build-image-ecr:
     runs-on: ubuntu-latest
     outputs:
-      image_uri: ${{ steps.build-image.outputs.image }}
+      output1: ${{ steps.build-image.outputs.image_uri }}
     environment: ${{ github.ref_name }}
     steps:
 
@@ -46,7 +46,7 @@ jobs:
       run: |
         docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -t $ECR_REGISTRY/$ECR_REPOSITORY:latest . 
         docker push $ECR_REGISTRY/$ECR_REPOSITORY -a
-        echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT  
+        echo "image_uri=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT  
              
     # - name: Set a test output
     #   id: set_output
@@ -71,11 +71,8 @@ jobs:
     #   with:
     #     mask-password: 'true'
 
-    - name: Debug GITHUB_OUTPUT path
-      run: echo "GITHUB_OUTPUT path is $GITHUB_OUTPUT"
-
     - name: Use test output
-      run: echo "The output from build-image-ecr was ${{ needs.build-image-ecr.outputs.image_uri }}"
+      run: echo "The output from build-image-ecr was ${{ needs.build-image-ecr.outputs.output1 }}"
 
     # - name: Trivy Image Scan
     #   uses: aquasecurity/trivy-action@master
