@@ -18,7 +18,7 @@ jobs:
   build-image-ecr:
     runs-on: ubuntu-latest
     outputs:
-      image_uri: ${{ steps.build-image.outputs.test_output }}
+      image_uri: ${{ steps.build-image.outputs.image }}
     environment: ${{ github.ref_name }}
     steps:
 
