@@ -1,9 +1,8 @@
 name: Dev Workflow
 
 on:  
- push: 
-  branches: [jody/trivy]
-    
+ workflow_dispatch: 
+  
 env:                 
   ECR_REPOSITORY: group2-ecr       
   ECS_SERVICE: group2-ecs-http         
@@ -16,6 +15,8 @@ jobs:
   # Build, tag image and store it in ECR
   build-image-ecr:
     runs-on: ubuntu-latest
+    outputs:
+      test_output: ${{ steps.set_output.outputs.test_output }}
     environment: ${{ github.ref_name }}
     steps:
 
@@ -46,9 +47,9 @@ jobs:
         # echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT  
 
     - name: Set a test output
+      id: set_output
       run: echo "test_output=hello_world" >> $GITHUB_OUTPUT
-
-
+      
   # Run the security scans
   security-scans:      
     runs-on: ubuntu-latest
