@@ -3,7 +3,7 @@ name: Dev Workflow
 on:  
  # workflow_dispatch: 
  push:
-    branches: [dev, jody/trivy]
+    branches: [ dev, "*"]
 
 env:                 
   ECR_REPOSITORY: group2-ecr       
@@ -49,7 +49,7 @@ jobs:
         echo "ECR_REGISTRY=$ECR_REGISTRY"
         echo "ECR_REPOSITORY=$ECR_REPOSITORY"
         echo "IMAGE_TAG=$IMAGE_TAG"
-        echo "image_uri=why is this so hard?" >> $GITHUB_OUTPUT  
+        echo "image_uri=$ECR_REPOSITORY/$IMAGE_TAG" >> $GITHUB_OUTPUT  
              
     # - name: Set a test output
     #   id: set_output
