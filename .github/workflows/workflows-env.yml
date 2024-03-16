@@ -88,30 +88,7 @@ jobs:
         cluster: ${{ env.ECS_CLUSTER }}
         wait-for-service-stability: true
 
-    
-    #  staging:
-    #       runs-on: ubuntu-latest
-    #       environment: staging
-    #       needs: dev
-
-    #       steps:
-    #        - uses: actions/checkout@v2
-    #        - name: Run a script
-    #          run: | 
-    #            echo "I am running a job in the staging environment"
-
-    #       - name: image-scan
-
-    #  prod:
-    #       runs-on: ubuntu-latest
-    #       environment: prod
-    #       needs: staging
-          
-    #       steps:
-    #        - uses: actions/checkout@v2
-    #        - name: Run a script
-    #          run: | 
-    #            echo "I am running a job in the prod environment"
+  
       
      
 
