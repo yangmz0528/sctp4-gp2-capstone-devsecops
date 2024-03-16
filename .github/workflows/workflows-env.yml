@@ -44,14 +44,14 @@ jobs:
       run: |
         docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -t $ECR_REGISTRY/$ECR_REPOSITORY:latest .
         docker push $ECR_REGISTRY/$ECR_REPOSITORY -a
-        echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_ENV
+        echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
 
     # Run Trivy Scan
         
     - name: Run Trivy Scan
       uses: aquasecurity/trivy-action@master
       with:
-        image-ref: ${{ env.image }}
+        image-ref: ${{ needs.build-image-ecr.outputs.image }}
         format: 'table'
         vuln-type: 'os,library'
         severity: 'CRITICAL,HIGH'
