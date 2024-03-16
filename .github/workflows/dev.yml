@@ -3,7 +3,7 @@ name: Dev Workflow
 on:  
  # workflow_dispatch: 
  push:
-    branches: [ dev, "*"]
+    branches: [ jody/trivy]
 
 env:                 
   ECR_REPOSITORY: group2-ecr       
