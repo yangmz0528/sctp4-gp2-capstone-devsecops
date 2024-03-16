@@ -3,7 +3,7 @@ name: Dev Workflow
 on:  
  # workflow_dispatch: 
  push:
-    branch: ['*']
+    branches: ['*']
 
 env:                 
   ECR_REPOSITORY: group2-ecr       
@@ -61,7 +61,7 @@ jobs:
     needs: build-image-ecr
     steps:
 
-      - name: Use test output
+    - name: Use test output
       run: echo "The output from build-image-ecr was ${{ needs.build-image-ecr.outputs.output1 }}"
 
     # - name: Configure AWS credentials
