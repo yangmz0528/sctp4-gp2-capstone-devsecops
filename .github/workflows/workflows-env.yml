@@ -1,98 +1,86 @@
-name: Simple Workflow
+name: Deploy to Amazon ECS
 
-on:  
-  push: 
-     branches: ["dev", "main"]
-    
+on:
+  push:
+    branches: [ "mingzi/bandit"]
+
 env:                 
   ECR_REPOSITORY: group2-ecr       
   ECS_SERVICE: group2-ecs-http         
   ECS_CLUSTER: group2-ecs                    
   CONTAINER_NAME: ecs-group2-py
   TASKDEF: group2-ecs-http
-
+                                               
 jobs:
-  dev:
-     # The type of runner that the job will run on
+  snyk-scan:
+    name: Snyk Security Scan
     runs-on: ubuntu-latest
-    environment: ${{ github.ref_name }}
     steps:
-    - name: Checkout
-      uses: actions/checkout@v2
-    - run: echo "I am running a job in the ${{ github.ref }} environment"
+       - uses: actions/checkout@master
+       - name: Run Snyk to check for vulnerabilities
+         uses: snyk/actions/node@master
+         env:
+           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+         with:
+          args: --severity-threshold=high
+  sast-scan:
+    name: Run Bandit Scan
+    runs-on: ubuntu-latest
+    steps:
+       - name: Checkout code
+         uses: actions/checkout@v3
+       - name: Install Bandit
+         run: pip install bandit
+       - name: Run Bandit Scan
+         run: bandit -r .
 
-    # Login to AWS
+  #deploy:
+  #  name: Deploy
+  #  environment:
+  #    name: ${{ github.ref_name }}
+  #  runs-on: ubuntu-latest
 
-    - name: Configure AWS credentials
-      uses: aws-actions/configure-aws-credentials@v1
-      with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: ${{ vars.AWS_REGION }}
+  #  steps:
+  #  - name: Checkout
+  #    uses: actions/checkout@v3
 
-    - name: Login to Amazon ECR
-      id: login-ecr
-      uses: aws-actions/amazon-ecr-login@v2
-      with:
-        mask-password: 'true'
+  #  - name: Configure AWS credentials
+  #    uses: aws-actions/configure-aws-credentials@v1
+  #    with:
+  #      aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  #      aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  #      aws-region: ${{ vars.AWS_REGION }}
 
-    - name: Build, tag image
-      id: build-image
-      env:
-        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        IMAGE_TAG: ${{ github.sha }}
-      run: |
-        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -t $ECR_REGISTRY/$ECR_REPOSITORY:latest .
-        docker push $ECR_REGISTRY/$ECR_REPOSITORY -a
-        echo "ECR_REGISTRY=$ECR_REGISTRY"
-        echo "ECR_REPOSITORY=$ECR_REPOSITORY"
-        echo "IMAGE_TAG=$IMAGE_TAG"
-        echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
+  #  - name: Login to Amazon ECR
+  #    id: login-ecr
+  #    uses: aws-actions/amazon-ecr-login@v1
 
-    # Run Trivy Scan
-        
-    - name: Run Trivy Scan
-      uses: aquasecurity/trivy-action@master
-      with:
-        image-ref: ${{ needs.build-image-ecr.outputs.image }}
-        format: 'table'
-        vuln-type: 'os,library'
-        severity: 'CRITICAL,HIGH'
+  #  - name: Build, tag, and push image to Amazon ECR
+  #    id: build-image
+  #    env:
+  #      ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+  #      IMAGE_TAG: ${{ github.sha }}
+  #    run: |
+  #      docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -t $ECR_REGISTRY/$ECR_REPOSITORY:latest .
+  #      docker push $ECR_REGISTRY/$ECR_REPOSITORY -a
+  #      echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
+    
+  #  - name: Download task definition
+  #    run: |
+  #      aws ecs describe-task-definition --task-definition $TASKDEF --query taskDefinition > task-definition.json
 
-    # Run Snyk scan, threshold set to high
+  #  - name: Fill in the new image ID in the Amazon ECS task definition
+  #    id: task-def
+  #    uses: aws-actions/amazon-ecs-render-task-definition@v1
+  #    with:
+  #      task-definition: task-definition.json
+  #      container-name: ${{ env.CONTAINER_NAME }}
+  #      image: ${{ steps.build-image.outputs.image }}
 
-    - name: Run Snyk to check for vulnerabilities
-      uses: snyk/actions/node@master
-      env:
-         SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-      with:
-         command: monitor
-         args: --severity-threshold=high
-
-    # ECR to ECS
-
-    - name: Download task definition
-      run: |
-        aws ecs describe-task-definition --task-definition $TASKDEF --query taskDefinition > task-definition.json
-
-    - name: Fill in the new image ID in the Amazon ECS task definition
-      id: task-def
-      uses: aws-actions/amazon-ecs-render-task-definition@v1
-      with:
-        task-definition: task-definition.json
-        container-name: ${{ env.CONTAINER_NAME }}
-        image: ${{ steps.build-image.outputs.image }}
-
-    - name: Deploy Amazon ECS task definition
-      uses: aws-actions/amazon-ecs-deploy-task-definition@v1
-      with:
-        task-definition: ${{ steps.task-def.outputs.task-definition }}
-        service: ${{ env.ECS_SERVICE }}
-        cluster: ${{ env.ECS_CLUSTER }}
-        wait-for-service-stability: true
-
-  
-      
-     
-
-
+  #  - name: Deploy Amazon ECS task definition
+  #    uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+  #    with:
+  #      task-definition: ${{ steps.task-def.outputs.task-definition }}
+  #      service: ${{ env.ECS_SERVICE }}
+  #      cluster: ${{ env.ECS_CLUSTER }}
+  #      wait-for-service-stability: true
