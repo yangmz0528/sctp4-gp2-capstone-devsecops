@@ -142,6 +142,16 @@ jobs:
         wait-for-service-stability: true
 
   # Job 5: Create PR to main branch
+  create-PR-to-main: 
+    runs-on: ubuntu-latest
+    steps:
+    - name: Create Pull Request to Main
+      uses: peter-evans/create-pull-request@v3
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        branch: dev
+        title: Update from Dev Environment
+        body: Automatic pull request creation from Dev to Main after successful deployment.
       
      
 
