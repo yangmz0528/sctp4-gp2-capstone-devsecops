@@ -28,7 +28,6 @@ jobs:
   sast-scan:
     name: Run Bandit Scan
     runs-on: ubuntu-latest
-    needs: snyk-scan
     steps:
        - name: Checkout code
          uses: actions/checkout@v3
