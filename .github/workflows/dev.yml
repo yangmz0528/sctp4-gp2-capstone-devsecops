@@ -124,14 +124,19 @@ jobs:
     - name: Download task definition
       run: |
         aws ecs describe-task-definition --task-definition $TASKDEF --query taskDefinition > task-definition.json
-
+    
+    - name: Get image URI from previous job
+      id: get_image_uri
+      run: |
+        echo "image_uri=${{ needs.build-image-ecr.outputs }}" >> $GITHUB_OUTPUT
+        
     - name: Fill in the new image ID in the Amazon ECS task definition
       id: task-def
       uses: aws-actions/amazon-ecs-render-task-definition@v1
       with:
         task-definition: task-definition.json
         container-name: ${{ env.CONTAINER_NAME }}
-        image: ${{ needs.build-image-ecr.outputs.image_uri }}
+        image: '${{ needs.build-image-ecr.outputs.image_uri }}'
 
     - name: Deploy Amazon ECS task definition
       uses: aws-actions/amazon-ecs-deploy-task-definition@v1
