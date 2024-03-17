@@ -1,4 +1,4 @@
-name: Dev Workflow
+name: Dev multi-job Workflow
 on:  
  workflow_dispatch: 
 #  push:
@@ -17,12 +17,12 @@ jobs:
   build-image-ecr:
     runs-on: ubuntu-latest
     outputs:
-      output1: ${{ steps.build-image.outputs.image_uri }}
+      image_uri: ${{ steps.build-image.outputs.image_uri }}
     environment: ${{ github.ref_name }}
     steps:
 
     - name: Checkout
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
 
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v4
