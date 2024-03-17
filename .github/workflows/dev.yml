@@ -128,8 +128,8 @@ jobs:
     - name: Get image URI from previous job
       id: get_image_uri
       run: |
-        echo "image_uri=${{ needs.build-image-ecr.outputs }}" >> $GITHUB_OUTPUT
-        
+        echo "image_uri=${{ needs.build-image-ecr.outputs.image_uri }}" >> $GITHUB_OUTPUT
+
     - name: Fill in the new image ID in the Amazon ECS task definition
       id: task-def
       uses: aws-actions/amazon-ecs-render-task-definition@v1
