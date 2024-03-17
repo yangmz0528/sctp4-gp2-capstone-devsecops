@@ -72,7 +72,6 @@ jobs:
         scan-type: 'image'
         image-ref: '${{ needs.build-image-ecr.outputs.image_uri}}'
         format: 'table'
-        ignore-unfixed: 'true'
         vuln-type: 'os,library'
         severity: 'CRITICAL,HIGH'
 
