@@ -1,8 +1,8 @@
-name: Simple Workflow
+name: Simple 1 Job Workflow
 
 on:  
   push: 
-     branches: ["dev", "main"]
+     branches: ['jody/test', '*']
     
 env:                 
   ECR_REPOSITORY: group2-ecr       
@@ -10,25 +10,24 @@ env:
   ECS_CLUSTER: group2-ecs                    
   CONTAINER_NAME: ecs-group2-py
   TASKDEF: group2-ecs-http
+  AWS_REGION: ap-southeast-1
 
 jobs:
   dev:
-     # The type of runner that the job will run on
     runs-on: ubuntu-latest
     environment: ${{ github.ref_name }}
     steps:
     - name: Checkout
-      uses: actions/checkout@v2
-    - run: echo "I am running a job in the ${{ github.ref }} environment"
+      uses: actions/checkout@v3
 
     # Login to AWS
 
     - name: Configure AWS credentials
-      uses: aws-actions/configure-aws-credentials@v1
+      uses: aws-actions/configure-aws-credentials@v4
       with:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: ${{ vars.AWS_REGION }}
+        aws-region: ${{ env.AWS_REGION }}
 
     - name: Login to Amazon ECR
       id: login-ecr
@@ -41,58 +40,53 @@ jobs:
       env:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         IMAGE_TAG: ${{ github.sha }}
-      run: |
+      run: | # Passing to $GITHUB_ENV is meant for 1 job workflow
         docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -t $ECR_REGISTRY/$ECR_REPOSITORY:latest .
         docker push $ECR_REGISTRY/$ECR_REPOSITORY -a
-        echo "ECR_REGISTRY=$ECR_REGISTRY"
-        echo "ECR_REPOSITORY=$ECR_REPOSITORY"
-        echo "IMAGE_TAG=$IMAGE_TAG"
-        echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
-
-    # Run Trivy Scan
-        
-    - name: Run Trivy Scan
+        echo "image_uri=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_ENV 
+       
+    # Run Trivy Scan    
+    - name: Trivy Vulnerability Scan
       uses: aquasecurity/trivy-action@master
       with:
-        image-ref: ${{ needs.build-image-ecr.outputs.image }}
+        image-ref: ${{ env.image_uri }}
         format: 'table'
         vuln-type: 'os,library'
         severity: 'CRITICAL,HIGH'
 
-    # Run Snyk scan, threshold set to high
+    # # Run Snyk scan, threshold set to high
 
-    - name: Run Snyk to check for vulnerabilities
-      uses: snyk/actions/node@master
-      env:
-         SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-      with:
-         command: monitor
-         args: --severity-threshold=high
+    # - name: Run Snyk to check for vulnerabilities
+    #   uses: snyk/actions/node@master
+    #   env:
+    #      SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+    #   with:
+    #      command: monitor
+    #      args: --severity-threshold=high
 
-    # ECR to ECS
+    # # ECR to ECS
 
-    - name: Download task definition
-      run: |
-        aws ecs describe-task-definition --task-definition $TASKDEF --query taskDefinition > task-definition.json
+    # - name: Download task definition
+    #   run: |
+    #     aws ecs describe-task-definition --task-definition $TASKDEF --query taskDefinition > task-definition.json
 
-    - name: Fill in the new image ID in the Amazon ECS task definition
-      id: task-def
-      uses: aws-actions/amazon-ecs-render-task-definition@v1
-      with:
-        task-definition: task-definition.json
-        container-name: ${{ env.CONTAINER_NAME }}
-        image: ${{ steps.build-image.outputs.image }}
+    # - name: Fill in the new image ID in the Amazon ECS task definition
+    #   id: task-def
+    #   uses: aws-actions/amazon-ecs-render-task-definition@v1
+    #   with:
+    #     task-definition: task-definition.json
+    #     container-name: ${{ env.CONTAINER_NAME }}
+    #     image: ${{ steps.build-image.outputs.image }}
 
-    - name: Deploy Amazon ECS task definition
-      uses: aws-actions/amazon-ecs-deploy-task-definition@v1
-      with:
-        task-definition: ${{ steps.task-def.outputs.task-definition }}
-        service: ${{ env.ECS_SERVICE }}
-        cluster: ${{ env.ECS_CLUSTER }}
-        wait-for-service-stability: true
+    # - name: Deploy Amazon ECS task definition
+    #   uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+    #   with:
+    #     task-definition: ${{ steps.task-def.outputs.task-definition }}
+    #     service: ${{ env.ECS_SERVICE }}
+    #     cluster: ${{ env.ECS_CLUSTER }}
+    #     wait-for-service-stability: true
 
   
       
      
-
 
