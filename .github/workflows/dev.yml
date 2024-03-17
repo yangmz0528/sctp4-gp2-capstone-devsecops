@@ -5,12 +5,11 @@ on:
     branches: dev
 
 env:                 
-  ECR_REPOSITORY: group2-ecr       
-  ECS_SERVICE: group2-ecs-http         
-  ECS_CLUSTER: group2-ecs                    
-  CONTAINER_NAME: ecs-group2-py
-  TASKDEF: group2-ecs-http
-  # AWS_REGION: ap-southeast-1
+  ECR_REPOSITORY: sctp-ce4-grp2-ecr       
+  ECS_SERVICE:  sctp-ce4-grp2-ecs         
+  ECS_CLUSTER: sctp-ce4-grp2-ecs                    
+  CONTAINER_NAME: sctp-ce4-grp2-ecs
+  TASKDEF: sctp-ce4-grp2-ecs
 
 jobs:
   # Job 1: Run Snyk Scan and SAST Scan (Bandit)
