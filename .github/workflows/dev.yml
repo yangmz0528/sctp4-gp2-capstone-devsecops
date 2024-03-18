@@ -1,8 +1,8 @@
 name: Dev multi-job Workflow
 on:  
  workflow_dispatch: 
-#  push:
-#     branches: dev
+  push:
+     branches: dev
 
 env:                 
   ECR_REPOSITORY: sctp-ce4-grp2-ecr       
@@ -29,7 +29,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
        - name: Checkout code
-         uses: actions/checkout@v3
+         uses: actions/checkout@v4
        - name: Install Bandit
          run: pip install bandit
        - name: Run Bandit Scan
@@ -47,7 +47,7 @@ jobs:
     steps:
 
     - name: Checkout
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v4
@@ -147,7 +147,7 @@ jobs:
     needs: ecr-to-ecs
     steps:
     - name: Checkout
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     - name: Create Pull Request to Main
       uses: peter-evans/create-pull-request@v6
