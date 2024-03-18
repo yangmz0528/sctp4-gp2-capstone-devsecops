@@ -1,6 +1,6 @@
 name: Dev multi-job Workflow
 on:  
- workflow_dispatch: 
+ # workflow_dispatch: 
   push:
      branches: dev
 
