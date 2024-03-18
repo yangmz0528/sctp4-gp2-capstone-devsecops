@@ -1,6 +1,6 @@
 name: Dev multi-job Workflow
 on:  
- # workflow_dispatch: 
+  workflow_dispatch: 
   push:
      branches: dev
 
@@ -159,7 +159,7 @@ jobs:
         title: 'Update from Dev Environment'
         body: Automatic pull request creation from Dev to Main after successful deployment.
         labels: automated pr
-        author: ${{ github.actor}}
+        
       
      
 
