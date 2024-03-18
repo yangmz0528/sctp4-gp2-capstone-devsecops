@@ -1,8 +1,8 @@
 name: Dev multi-job Workflow
 on:  
  workflow_dispatch: 
- push:
-    branches: dev
+#  push:
+#     branches: dev
 
 env:                 
   ECR_REPOSITORY: sctp-ce4-grp2-ecr       
@@ -146,13 +146,20 @@ jobs:
     runs-on: ubuntu-latest
     needs: ecr-to-ecs
     steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
     - name: Create Pull Request to Main
-      uses: peter-evans/create-pull-request@v3
+      uses: peter-evans/create-pull-request@v6
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
         branch: dev
-        title: Update from Dev Environment
+        base: main
+        commit-message: Update from Dev Environment
+        title: 'Update from Dev Environment'
         body: Automatic pull request creation from Dev to Main after successful deployment.
+        labels: automated pr
+        author: ${{ github.actor}}
       
      
 
