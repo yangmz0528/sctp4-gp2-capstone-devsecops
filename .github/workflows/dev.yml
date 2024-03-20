@@ -145,6 +145,9 @@ jobs:
   create-PR-to-main: 
     runs-on: ubuntu-latest
     needs: ecr-to-ecs
+    permissions: 
+      contents: write
+      pull-requests: write
 
     steps:
     - name: Checkout
