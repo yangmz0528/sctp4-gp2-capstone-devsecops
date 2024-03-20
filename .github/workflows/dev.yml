@@ -1,7 +1,7 @@
 name: Dev multi-job Workflow
 on:  
   push:
-    branches: dev
+    branches: [ 'main','dev']
   workflow_dispatch: 
 
 env:                 
@@ -16,6 +16,7 @@ jobs:
   snyk-scan:
     name: Snyk Security Scan
     runs-on: ubuntu-latest
+    environment: ${{ github.ref_name }}
     steps:
        - uses: actions/checkout@master
        - name: Run Snyk to check for vulnerabilities
@@ -24,9 +25,11 @@ jobs:
            SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
          with:
           args: --severity-threshold=high
+  
   sast-scan:
     name: Run Bandit Scan
     runs-on: ubuntu-latest
+    environment: ${{ github.ref_name }}
     steps:
        - name: Checkout code
          uses: actions/checkout@v4
