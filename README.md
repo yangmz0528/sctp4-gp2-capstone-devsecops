@@ -12,7 +12,8 @@ The team is engaged by a client (N Repairs) to deploy their website securely usi
 4. Proper handling of CI/CD Pipeline secrets
 
 ## Branching strategy
-![[branching strategy.drawio.png]]
+
+![branching strategy drawio](https://github.com/yangmz0528/sctp4-gp2-capstone-devsecops/assets/145353293/a8363f4d-4352-4e3d-975a-f418d9fd5021)
 
 The branching strategy is a simple one, priority has been placed on stability of the codebase and developers to work efficiently. To achieve this balance, we've set up specific protections on `main` branch.
 ##### The current `main` branch protection rules:
