@@ -3,7 +3,7 @@
 ## Overview:
 Case 3 - DevSecOps
 
-The team is engaged by a startup company (N Repairs) to implement CI/CD pipeline with security scans for their company webiste. The primary objective of this CI/CD pipeline is to ensure swift and secure deployment processes. By integrating automated security scans into our CICD workflow, security vulnerabilities and compliance issues will be raised early in the development cycle. This not only accelerates the deployment of new features and updates but also fortifies the website against potential threats, safeguarding sensitive data and maintaining user trust.
+The team is engaged by a startup company (N Repairs) to implement CI/CD pipeline with security scans for their company website. The primary objective of this CI/CD pipeline is to ensure swift and secure deployment processes. By integrating automated security scans into the CICD workflow, security vulnerabilities and compliance issues will be raised early in the development cycle. This not only accelerates the deployment of new features and updates but also fortifies the website against potential threats, safeguarding sensitive data and maintaining user trust.
 
 ## Project Requirements 
 1. CI/CD Pipeline
