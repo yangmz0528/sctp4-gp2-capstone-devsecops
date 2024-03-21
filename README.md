@@ -28,7 +28,27 @@ A merge to `main` will only be allowed after passing all the security/vulnerabil
 `Dev` serves as our default branch, where most of the work is done. Over here, new features are developed and bugs are squashed. Ideally, all developers are to create their feature branches from `dev` so they can work on different features concurrently. After completing their features they will merge back into `dev`. 
 
 ## CI/CD Pipeline Secrets
--insert screenshot-
+To prevent the exposure of sensitive information such as credentials and API keys in the codebase, it is important we store such data in the repository's secrets. This is to ensure they are encrypted at rest and prevent exposure as well as allowing the workflow to access the credentials multiple times without exposing the risk of exposing them in logs and other workflow files. 
+
+``` bash
+# Job 2: Build, tag image and store it in ECR
+build-image-ecr:
+  runs-on: ubuntu-latest
+  needs:
+    - snyk-scan
+    - sast-scan
+  outputs:
+    image_uri: ${{ steps.build-image.outputs.image_uri }}
+  environment: ${{ github.ref_name }}
+  steps:
+    - name: Checkout
+	uses: actions/checkout@v4
+	- name: Configure AWS credentials
+	uses: aws-actions/configure-aws-credentials@v4
+	with:
+	  aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+	  aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+	  aws-region: ap-southeast-1
 
 ## CI/CD Pipeline
 The GitHub action workflow would trigger upon a push to either `main` or `dev`.
