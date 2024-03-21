@@ -12,9 +12,9 @@ env:
   TASKDEF: sctp-ce4-grp2-ecs
 
 jobs:
-  # Job 1: Run Snyk Scan and SAST Scan (Bandit)
+  # Job 1: Run Snyk Scan & SAST Scan (Bandit)
   snyk-scan:
-    name: Snyk Security Scan
+    name: snyk scan
     runs-on: ubuntu-latest
     environment: ${{ github.ref_name }}
     steps:
@@ -27,7 +27,7 @@ jobs:
           args: --severity-threshold=high
   
   sast-scan:
-    name: Run Bandit Scan
+    name: bandit scan
     runs-on: ubuntu-latest
     environment: ${{ github.ref_name }}
     steps:
@@ -130,14 +130,14 @@ jobs:
 
     - name: Fill in the new image ID in the Amazon ECS task definition
       id: task-def
-      uses: aws-actions/amazon-ecs-render-task-definition@v1
+      uses: aws-actions/amazon-ecs-render-task-definition@v1.2.0
       with:
         task-definition: task-definition.json
         container-name: ${{ env.CONTAINER_NAME }}
         image: '${{ needs.build-image-ecr.outputs.image_uri }}'
 
     - name: Deploy Amazon ECS task definition
-      uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+      uses: aws-actions/amazon-ecs-deploy-task-definition@v1.4.11
       with:
         task-definition: ${{ steps.task-def.outputs.task-definition }}
         service: ${{ env.ECS_SERVICE }}
@@ -148,6 +148,8 @@ jobs:
   create-PR-to-main: 
     runs-on: ubuntu-latest
     needs: ecr-to-ecs
+    # only run when the environment is dev
+    if: ${{ github.ref_name }} == 'dev' 
     permissions: 
       contents: write
       pull-requests: write
