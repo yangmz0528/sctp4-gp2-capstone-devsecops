@@ -170,7 +170,7 @@ jobs:
     needs: ecr-to-ecs
     steps:
       - name: ZAP-scan
-        uses: zaproxy/action-baseline@v0.8curl.0
+        uses: zaproxy/action-baseline@v0.11.0
         with:
           # The 'target' parameter specifies the URL of the deployed application to be scanned.
           target: 'http://${{ needs.ecr-to-ecs.outputs.ecs_public_ip }}:8080'
