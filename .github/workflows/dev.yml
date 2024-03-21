@@ -111,7 +111,7 @@ jobs:
     env:
       ECS_CLUSTER: sctp-ce4-grp2-ecs 
     outputs:
-      ecs_public_id: ${{ steps.get-ip.outputs.ecs_public_id }}
+      ecs_public_ip: ${{ steps.get-ip.outputs.ecs_public_ip }}
     environment: ${{ github.ref_name }}
     steps:
 
@@ -153,15 +153,15 @@ jobs:
 
     - name: Print ECS Cluster Environment Variable
       run: |
-          echo "Using ECS Cluster: $ECS_Cluster"    
+          echo "Using ECS Cluster: $ECS_CLUSTER"   
 
     - name: Get Public IP of ECS Task
       id: get-ip
       run: |
-        ENI_ID=$(aws ecs describe-tasks --cluster $ECS_Cluster --tasks $(aws ecs list-tasks --cluster $ECS_Cluster --query 'taskArns[0]' --output text) --query 'tasks[0].attachments[0].details[?name==`networkInterfaceId`].value' --output text)
+        ENI_ID=$(aws ecs describe-tasks --cluster $ECS_CLUSTER --tasks $(aws ecs list-tasks --cluster $ECS_CLUSTER --query 'taskArns[0]' --output text) --query 'tasks[0].attachments[0].details[?name==`networkInterfaceId`].value' --output text)
         PUBLIC_IP=$(aws ec2 describe-network-interfaces --network-interface-ids $ENI_ID --query 'NetworkInterfaces[0].Association.PublicIp' --output text)
-        echo "ecs_public_id=$public_ip" >> $GITHUB_OUTPUT
-        echo " The public IP for the website is ${{ steps.get-ip.outputs.ecs_public_id }}"  
+        echo "ecs_public_ip=$PUBLIC_IP" >> $GITHUB_OUTPUT
+        echo " The public IP for the website is $PUBLIC_IP
       
   # Job 5: Perform a Dynamic Appplication Security Test
   zap-scan:
