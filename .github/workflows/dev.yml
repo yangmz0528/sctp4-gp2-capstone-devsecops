@@ -60,7 +60,7 @@ jobs:
         aws-region: ${{ vars.AWS_REGION }}
 
     - name: Login to Amazon ECR
-      id: login-ecr
+      id: login-ecr # Define an id which allows other steps to reference outputs from this step.
       uses: aws-actions/amazon-ecr-login@v2
       with:
         mask-password: 'true'
@@ -73,7 +73,8 @@ jobs:
       run: |
         docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -t $ECR_REGISTRY/$ECR_REPOSITORY:latest . 
         docker push $ECR_REGISTRY/$ECR_REPOSITORY -a
-        echo "image_uri=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT  
+        echo "image_uri=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
+        echo " The image uri is ${{ steps.build-image.outputs.image_uri }}"  
 
   # Job 3: Run Trivy vulnerability scan on image stored in ECR
   trivy-vul-scan:      
@@ -108,6 +109,8 @@ jobs:
   ecr-to-ecs:
     runs-on: ubuntu-latest
     needs: [trivy-vul-scan, build-image-ecr]
+    outputs:
+      ecs_public_id: ${{ steps.get-ip.outputs.ecs_public_id }}
     environment: ${{ github.ref_name }}
     steps:
       
@@ -124,7 +127,7 @@ jobs:
       with:
         mask-password: 'true'
 
-    - name: Download task definition
+    - name: Download task definition 
       run: |
         aws ecs describe-task-definition --task-definition $TASKDEF --query taskDefinition > task-definition.json
 
@@ -144,7 +147,27 @@ jobs:
         cluster: ${{ env.ECS_CLUSTER }}
         wait-for-service-stability: true
 
-  # Job 5: Create PR to main branch
+    - name: Get Public IP of ECS Task
+      id: get-ip
+      run: |
+        ENI_ID=$(aws ecs describe-tasks --cluster ${{ env.ECS_Cluster }} --tasks $(aws ecs list-tasks --cluster ${{ env.ECS_Cluster }} --query 'taskArns[0]' --output text) --query 'tasks[0].attachments[0].details[?name==`networkInterfaceId`].value' --output text)
+        PUBLIC_IP=$(aws ec2 describe-network-interfaces --network-interface-ids $ENI_ID --query 'NetworkInterfaces[0].Association.PublicIp' --output text)
+        echo "ecs_public_id=$public_ip" >> $GITHUB_OUTPUT
+        echo " The image uri is ${{ steps.get-ip.outputs.ecs_public_id }}"  
+      
+  # Job 5: Perform a Dynamic Appplication Security Test
+  zap-scan:
+    runs-on: ubuntu-latest
+    permissions: write-all
+    needs: ecr-to-ecs
+    steps:
+      - name: ZAP Scan
+        uses: zaproxy/action-full-scan@v0.9.0
+        with:
+          # The 'target' parameter specifies the URL of the deployed application to be scanned.
+          target: ${{ needs.ecr-to-ecs.outputs.ecs_public_id }}
+
+  # Job 6: Creates an automated pull request to main after previous jobs are completed
   create-PR-to-main: 
     runs-on: ubuntu-latest
     needs: ecr-to-ecs
