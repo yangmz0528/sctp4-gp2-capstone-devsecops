@@ -150,7 +150,7 @@ jobs:
     - name: Get Public IP of ECS Task
       id: get-ip
       run: |
-        ENI_ID=$(aws ecs describe-tasks --cluster ${{ env.ECS_Cluster }} --tasks $(aws ecs list-tasks --cluster ${{ env.ECS_Cluster }} --query 'taskArns[0]' --output text) --query 'tasks[0].attachments[0].details[?name==`networkInterfaceId`].value' --output text)
+        ENI_ID=$(aws ecs describe-tasks --cluster $ECS_Cluster --tasks $(aws ecs list-tasks --cluster $ECS_Cluster --query 'taskArns[0]' --output text) --query 'tasks[0].attachments[0].details[?name==`networkInterfaceId`].value' --output text)
         PUBLIC_IP=$(aws ec2 describe-network-interfaces --network-interface-ids $ENI_ID --query 'NetworkInterfaces[0].Association.PublicIp' --output text)
         echo "ecs_public_id=$public_ip" >> $GITHUB_OUTPUT
         echo " The image uri is ${{ steps.get-ip.outputs.ecs_public_id }}"  
