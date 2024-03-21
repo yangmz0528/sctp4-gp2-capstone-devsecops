@@ -108,6 +108,8 @@ jobs:
   ecr-to-ecs:
     runs-on: ubuntu-latest
     needs: [trivy-vul-scan, build-image-ecr]
+    env:
+      ECS_CLUSTER: sctp-ce4-grp2-ecs 
     outputs:
       ecs_public_id: ${{ steps.get-ip.outputs.ecs_public_id }}
     environment: ${{ github.ref_name }}
