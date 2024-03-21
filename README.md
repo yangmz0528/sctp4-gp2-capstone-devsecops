@@ -31,6 +31,9 @@ A merge to `main` will only be allowed after passing all the security/vulnerabil
 -insert screenshot-
 
 ## CI/CD Pipeline
+
+![GitHub Workflow - Capstone Project](https://github.com/yangmz0528/sctp4-gp2-capstone-devsecops/assets/145353293/6e0e9844-0010-44f5-a226-97636cf5358e)
+
 The GitHub action workflow would trigger upon a push to either `main` or `dev`.
 
 - `synk-scan` - Perform [Synk](https://github.com/snyk/actions/tree/master/python-3.10) identifying and addressing vulnerabilities in dependencies and container images
