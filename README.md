@@ -3,7 +3,7 @@
 ## Overview:
 Case 3 - DevSecOps
 
-The team is engaged by a client (N Repairs) to deploy their website securely using AWS infrastructure. 
+The team is engaged by a startup company (N Repairs) to implement CI/CD pipeline with security scans for their company webiste. The primary objective of this CI/CD pipeline is to ensure swift and secure deployment processes. By integrating automated security scans into our CICD workflow, security vulnerabilities and compliance issues will be raised early in the development cycle. This not only accelerates the deployment of new features and updates but also fortifies the website against potential threats, safeguarding sensitive data and maintaining user trust.
 
 ## Project Requirements 
 1. CI/CD Pipeline
@@ -16,6 +16,7 @@ The team is engaged by a client (N Repairs) to deploy their website securely usi
 ![branching strategy drawio](https://github.com/yangmz0528/sctp4-gp2-capstone-devsecops/assets/145353293/a8363f4d-4352-4e3d-975a-f418d9fd5021)
 
 The branching strategy is a simple one, priority has been placed on stability of the codebase and developers to work efficiently. To achieve this balance, we've set up specific protections on `main` branch.
+
 ##### The current `main` branch protection rules:
 1. Requires pull request before merging
 2. Requires at least `1` approval before merging
@@ -34,8 +35,8 @@ A merge to `main` will only be allowed after passing all the security/vulnerabil
 
 The GitHub action workflow would trigger upon a push to either `main` or `dev`.
 
-- `synk-scan` - Perform [Synk](https://github.com/snyk/actions/tree/master/python-3.10)security scan on python app
-- `bandit-scan` - Perform [Bandit](https://github.com/PyCQA/bandit) scan on python app to find common security issues
+- `synk-scan` - Perform [Synk](https://github.com/snyk/actions/tree/master/python-3.10) identifying and addressing vulnerabilities in dependencies and container images
+- `bandit-scan` - Perform [Bandit](https://github.com/PyCQA/bandit) analyze Python code for security issues
 - `build-image-ecr` - Builds image and push it to ECR
 - `trivy-vul-scan` - Perform [Trivy](https://github.com/aquasecurity/trivy-action) vulnerability scan on image stored in ECR
 - `ecr-to-ecs` - Deploy image from ECR to ECS
@@ -45,6 +46,9 @@ For the final job all jobs in the GitHub Actions workflow must pass successfully
 
 ## Backend (Website)
 -insert website link-
+
+## Security Scans
+-insert text-
 
 ## Roadmap
 - Implement dynamic application security test
