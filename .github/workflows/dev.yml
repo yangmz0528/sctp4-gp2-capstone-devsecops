@@ -1,7 +1,7 @@
 name: Dev multi-job Workflow
 on:  
   push:
-    branches: [ 'main','dev', "*"]
+    branches: [ 'main','dev', "jody/zap"]
   workflow_dispatch: 
 
 env:                 
