@@ -31,8 +31,6 @@ A merge to `main` will only be allowed after passing all the security/vulnerabil
 -insert screenshot-
 
 ## CI/CD Pipeline
--insert workflow diagram-
-
 The GitHub action workflow would trigger upon a push to either `main` or `dev`.
 
 - `synk-scan` - Perform [Synk](https://github.com/snyk/actions/tree/master/python-3.10) identifying and addressing vulnerabilities in dependencies and container images
@@ -40,20 +38,14 @@ The GitHub action workflow would trigger upon a push to either `main` or `dev`.
 - `build-image-ecr` - Builds image and push it to ECR
 - `trivy-vul-scan` - Perform [Trivy](https://github.com/aquasecurity/trivy-action) vulnerability scan on image stored in ECR
 - `ecr-to-ecs` - Deploy image from ECR to ECS
+- `zap-scan` - Using [Zap Baseline](https://github.com/marketplace/actions/zap-baseline-scan)to find vulnerabilities in the web application after it has been deployed
 - `create-pr-to-main` - Create automated pull request to main after successful deployment (only from `dev')
 
 For the final job all jobs in the GitHub Actions workflow must pass successfully. This ensures that no unverified code enters `main`.
 
-## Backend (Website)
--insert website link-
-
-## Security Scans
--insert text-
-
 ## Roadmap
-- Implement dynamic application security test
-- 
+- Implement automated deployment of AWS assets within the CI/CD pipeline
 
 ## Troubleshooting/Learning points: 
-1. if existing an pull request exists, the job wouldn't create another pull request. 
-2. `dev` branch lacks protection, might cause merge conflict if developers forget to pull before hand/did not make their own feature branch
+1. If an existing pull request exists, the `create-pr-to-main` job will not create a new pull request. 
+2. `Dev` branch lacks protection which is likely to cause merge conflicts if developers fail to pull anytime before working on their independent feature/bugfixes. 
