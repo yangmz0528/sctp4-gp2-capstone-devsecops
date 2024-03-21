@@ -42,11 +42,11 @@ build-image-ecr:
   environment: ${{ github.ref_name }}
   steps:
     - name: Checkout
-	uses: actions/checkout@v4
+    uses: actions/checkout@v4
     - name: Configure AWS credentials
     uses: aws-actions/configure-aws-credentials@v4
-	with:
-	  aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+    with:
+      aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
       aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       aws-region: ${{ vars.AWS_REGION }}
 ```
