@@ -173,7 +173,7 @@ jobs:
         uses: zaproxy/action-full-scan@v0.9.0
         with:
           # The 'target' parameter specifies the URL of the deployed application to be scanned.
-          target: 'http://${{ needs.ecr-to-ecs.outputs.ecs_public_id }}/8080'
+          target: 'http://${{ needs.ecr-to-ecs.outputs.ecs_public_ip }}/8080'
 
   # Job 6: Creates an automated pull request to main after previous jobs are completed
   create-PR-to-main: 
