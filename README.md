@@ -1,7 +1,7 @@
 # (SCTP) Cloud Infrastructure Engineering Capstone Projection
 
 ## Overview:
-Case 3 - DevSecOps
+**Case 3 - DevSecOps**
 
 The team is engaged by a startup company (N Repairs) to implement CI/CD pipeline with security scans for their company website. The primary objective of this CI/CD pipeline is to ensure swift and secure deployment processes. By integrating automated security scans into the CICD workflow, security vulnerabilities and compliance issues will be raised early in the development cycle. This not only accelerates the deployment of new features and updates but also fortifies the website against potential threats, safeguarding sensitive data and maintaining user trust.
 
@@ -30,7 +30,7 @@ A merge to `main` will only be allowed after passing all the security/vulnerabil
 ## CI/CD Pipeline Secrets
 To prevent the exposure of sensitive information such as credentials and API keys in the codebase, it is important we store such data in the repository's secrets. This is to ensure they are encrypted at rest and prevent exposure as well as allowing the workflow to access the credentials multiple times without exposing the risk of exposing them in logs and other workflow files. 
 
-``` bash
+``` yaml
 # Job 2: Build, tag image and store it in ECR
 build-image-ecr:
   runs-on: ubuntu-latest
@@ -43,13 +43,13 @@ build-image-ecr:
   steps:
     - name: Checkout
 	uses: actions/checkout@v4
-	- name: Configure AWS credentials
-	uses: aws-actions/configure-aws-credentials@v4
+    - name: Configure AWS credentials
+    uses: aws-actions/configure-aws-credentials@v4
 	with:
 	  aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-	  aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-	  aws-region: ${{ vars.AWS_REGION }}
-
+      aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      aws-region: ${{ vars.AWS_REGION }}
+```
 ## CI/CD Pipeline
 
 ![GitHub Workflow - Capstone Project](https://github.com/yangmz0528/sctp4-gp2-capstone-devsecops/assets/145353293/6e0e9844-0010-44f5-a226-97636cf5358e)
