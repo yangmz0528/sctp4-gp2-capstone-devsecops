@@ -65,7 +65,6 @@ The GitHub action workflow would trigger upon a push to either `main` or `dev`.
 - `create-pr-to-main` - Create automated pull request to main after successful deployment (only from `dev')
 
 For the final job all jobs in the GitHub Actions workflow must pass successfully. This ensures that no unverified code enters `main`.
-
 ## Security Scans
 There is a total of 3 security scans within the CI/CD pipeline, 
 1. Software Composition Analysis (SCA) - Snyk
@@ -83,7 +82,6 @@ Trivy is an open-source vulnerability scanner designed specifically for containe
 4. Dynamic Application Security Testing (DAST) - OWASP ZAP
 
 OWASP ZAP (Zed Attack Proxy) is a widely used open-source web application security testing tool. It is designed to help developers and security professionals find security vulnerabilities in web applications during development and testing phases. ZAP offers a range of features including automated scanning, manual testing tools, and a proxy intercepting HTTP requests and responses to identify potential security flaws such as injection attacks, cross-site scripting (XSS), and broken authentication. With its user-friendly interface and extensive documentation, OWASP ZAP is a valuable tool for improving the security posture of web applications.
-
 ## Roadmap
 - Implement automated deployment of AWS assets within the CI/CD pipeline
 
