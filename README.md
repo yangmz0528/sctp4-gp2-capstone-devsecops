@@ -71,23 +71,37 @@ There is a total of 4 security scans within the CI/CD pipeline,
 - Software Composition Analysis (SCA) - Snyk
 
 Snyk is a developer-first cloud-native security tool that finds and automatically fix vulnerabilities in your code, open-source dependencies, containers, and infrastructure as code. Snyk uses a severity level system to classify the severity of vulnerabilities found in software dependencies. In the context of current use case, as the company is a start up and would want to focus on faster deployment and application development, we would set the severity threshold to be high. 
+![image](https://github.com/yangmz0528/sctp4-gp2-capstone-devsecops/assets/108774198/14b9e5a5-007d-4c2a-99ca-62d72aaa6dc9)
 
 
 - Static Application Security Testing (SAST) - Bandit
 
 As N Repairs has highlighted specifically that they will be mainly developing the application in Python, we will use Bandit as it is a tool designed to find common security issues in Python code. We have set the threshold to be high confidence and high severity inn vulnerability.
+![image](https://github.com/yangmz0528/sctp4-gp2-capstone-devsecops/assets/108774198/b39e1a5d-8859-4fa9-9090-7147b37fa75b)
 
 - Image Scanning - Trivy
   
 Trivy is an open-source vulnerability scanner designed specifically for container images. It helps developers and security teams identify vulnerabilities in container images by scanning their layers and providing detailed reports on any security issues found. Its fast scanning capabilities and easy integration with CI/CD pipelines make it a popular choice for ensuring the security of containerized environments.
+![image](https://github.com/yangmz0528/sctp4-gp2-capstone-devsecops/assets/108774198/0f15ff92-8258-4817-a199-f9a0ad285913)
+The above is a sample of result returned by Trivy. 
+
+Some of the precautions and measure to take is to patch these vulnerabilities. Check if newer versions of the affected libraries or packages have been released with security fixes. Update your Docker images to use patched versions of the vulnerable dependencies.
+However, there is also some libaries that does not have a fix (refer to screenshot below).
+![image](https://github.com/yangmz0528/sctp4-gp2-capstone-devsecops/assets/108774198/2deea4d0-9bc8-43b9-be4e-e2954de5213f)
 
 - Dynamic Application Security Testing (DAST) - OWASP ZAP
 
 OWASP ZAP (Zed Attack Proxy) is a widely used open-source web application security testing tool. It is designed to help developers and security professionals find security vulnerabilities in web applications during development and testing phases. ZAP offers a range of features including automated scanning, manual testing tools, and a proxy intercepting HTTP requests and responses to identify potential security flaws such as injection attacks, cross-site scripting (XSS), and broken authentication. With its user-friendly interface and extensive documentation, OWASP ZAP is a valuable tool for improving the security posture of web applications.
+
+Refer to the results: [link](https://github.com/yangmz0528/sctp4-gp2-capstone-devsecops/issues/15)
+
+The report highlights a few vulnerabilities such as absence of Anti-CSRF Tokens, Content Security Policy (CSP) Header Not Set etc. Based on the vulnerabilities reports, the security teams can identify the possible vulnerabilities that the website can be facing and do the necessary remediation actions to strengthen the security posture of the application, such as implementing Anti-CSRF Tokens to mitigate Cross-Site Request Forgery (CSRF) attacks, configuring Content Security Policy (CSP) headers to mitigate various types of attacks including XSS (Cross-Site Scripting), and conducting thorough code reviews and security assessments to identify and fix any other potential security weaknesses.
 
 ## Roadmap
 - Implement automated deployment of AWS assets within the CI/CD pipeline
 
 ## Troubleshooting/Learning points: 
 1. If an existing pull request exists, the `create-pr-to-main` job will not create a new pull request. 
-2. `Dev` branch lacks protection which is likely to cause merge conflicts if developers fail to pull anytime before working on their independent feature/bugfixes. 
+2. `Dev` branch lacks protection which is likely to cause merge conflicts if developers fail to pull anytime before working on their independent feature/bugfixes.
+
+
