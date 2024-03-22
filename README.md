@@ -56,16 +56,32 @@ build-image-ecr:
 
 The GitHub action workflow would trigger upon a push to either `main` or `dev`.
 
-- `synk-scan` - Perform [Synk](https://github.com/snyk/actions/tree/master/python-3.10) identifying and addressing vulnerabilities in dependencies and container images
+- `snyk-scan` - Perform [Snyk](https://github.com/snyk/actions/tree/master/python-3.10) identifying and addressing vulnerabilities in dependencies and container images
 - `bandit-scan` - Perform [Bandit](https://github.com/PyCQA/bandit) analyze Python code for security issues
 - `build-image-ecr` - Builds image and push it to ECR
 - `trivy-vul-scan` - Perform [Trivy](https://github.com/aquasecurity/trivy-action) vulnerability scan on image stored in ECR
 - `ecr-to-ecs` - Deploy image from ECR to ECS
-- `zap-scan` - Using [Zap Baseline](https://github.com/marketplace/actions/zap-baseline-scan)to find vulnerabilities in the web application after it has been deployed
+- `zap-scan` - Using [Zap Baseline](https://github.com/marketplace/actions/zap-baseline-scan) to find vulnerabilities in the web application after it has been deployed
 - `create-pr-to-main` - Create automated pull request to main after successful deployment (only from `dev')
 
 For the final job all jobs in the GitHub Actions workflow must pass successfully. This ensures that no unverified code enters `main`.
+## Security Scans
+There is a total of 3 security scans within the CI/CD pipeline, 
+1. Software Composition Analysis (SCA) - Snyk
 
+Snyk is a developer-first cloud-native security tool that finds and automatically fix vulnerabilities in your code, open-source dependencies, containers, and infrastructure as code. Snyk uses a severity level system to classify the severity of vulnerabilities found in software dependencies. In the context of current use case, as the company is a start up and would want to focus on faster deployment and application development, we would set the severity threshold to be high. 
+
+
+2. Static Application Security Testing (SAST) - Bandit
+
+As N Repairs has highlighted specifically that they will be mainly developing the application in Python, we will use Bandit as it is a tool designed to find common security issues in Python code. We have set the threshold to be high confidence and high severity inn vulnerability.
+
+3. Image Scanning - Trivy
+Trivy is an open-source vulnerability scanner designed specifically for container images. It helps developers and security teams identify vulnerabilities in container images by scanning their layers and providing detailed reports on any security issues found. Its fast scanning capabilities and easy integration with CI/CD pipelines make it a popular choice for ensuring the security of containerized environments.
+
+4. Dynamic Application Security Testing (DAST) - OWASP ZAP
+
+OWASP ZAP (Zed Attack Proxy) is a widely used open-source web application security testing tool. It is designed to help developers and security professionals find security vulnerabilities in web applications during development and testing phases. ZAP offers a range of features including automated scanning, manual testing tools, and a proxy intercepting HTTP requests and responses to identify potential security flaws such as injection attacks, cross-site scripting (XSS), and broken authentication. With its user-friendly interface and extensive documentation, OWASP ZAP is a valuable tool for improving the security posture of web applications.
 ## Roadmap
 - Implement automated deployment of AWS assets within the CI/CD pipeline
 
