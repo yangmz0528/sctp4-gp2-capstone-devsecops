@@ -73,10 +73,14 @@ There is a total of 4 security scans within the CI/CD pipeline,
 Snyk is a developer-first cloud-native security tool that finds and automatically fix vulnerabilities in your code, open-source dependencies, containers, and infrastructure as code. Snyk uses a severity level system to classify the severity of vulnerabilities found in software dependencies. In the context of current use case, as the company is a start up and would want to focus on faster deployment and application development, we would set the severity threshold to be high. 
 ![image](https://github.com/yangmz0528/sctp4-gp2-capstone-devsecops/assets/108774198/14b9e5a5-007d-4c2a-99ca-62d72aaa6dc9)
 
+![image](https://github.com/yangmz0528/sctp4-gp2-capstone-devsecops/assets/108774198/14b9e5a5-007d-4c2a-99ca-62d72aaa6dc9)
+
 
 - Static Application Security Testing (SAST) - Bandit
 
 As N Repairs has highlighted specifically that they will be mainly developing the application in Python, we will use Bandit as it is a tool designed to find common security issues in Python code. We have set the threshold to be high confidence and high severity inn vulnerability.
+![image](https://github.com/yangmz0528/sctp4-gp2-capstone-devsecops/assets/108774198/b39e1a5d-8859-4fa9-9090-7147b37fa75b)
+
 ![image](https://github.com/yangmz0528/sctp4-gp2-capstone-devsecops/assets/108774198/b39e1a5d-8859-4fa9-9090-7147b37fa75b)
 
 - Image Scanning - Trivy
@@ -87,6 +91,15 @@ The above is a sample of result returned by Trivy.
 
 Some of the precautions and measure to take is to patch these vulnerabilities. Check if newer versions of the affected libraries or packages have been released with security fixes. Update your Docker images to use patched versions of the vulnerable dependencies.
 However, there is also some libaries that does not have a fix (refer to screenshot below).
+![image](https://github.com/yangmz0528/sctp4-gp2-capstone-devsecops/assets/108774198/2deea4d0-9bc8-43b9-be4e-e2954de5213f)
+
+![image](https://github.com/yangmz0528/sctp4-gp2-capstone-devsecops/assets/108774198/0f15ff92-8258-4817-a199-f9a0ad285913)
+
+The above is a sample of result returned by Trivy. 
+
+Some of the precautions and measure to take is to patch these vulnerabilities. Check if newer versions of the affected libraries or packages have been released with security fixes. Update your Docker images to use patched versions of the vulnerable dependencies.
+However, there is also some libaries that does not have a fix (refer to screenshot below).
+
 ![image](https://github.com/yangmz0528/sctp4-gp2-capstone-devsecops/assets/108774198/2deea4d0-9bc8-43b9-be4e-e2954de5213f)
 
 - Dynamic Application Security Testing (DAST) - OWASP ZAP
