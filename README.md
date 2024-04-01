@@ -71,6 +71,7 @@ There is a total of 4 security scans within the CI/CD pipeline,
 - Software Composition Analysis (SCA) - Snyk
 
 Snyk is a developer-first cloud-native security tool that finds and automatically fix vulnerabilities in your code, open-source dependencies, containers, and infrastructure as code. Snyk uses a severity level system to classify the severity of vulnerabilities found in software dependencies. In the context of current use case, as the company is a start up and would want to focus on faster deployment and application development, we would set the severity threshold to be high. 
+
 ![image](https://github.com/yangmz0528/sctp4-gp2-capstone-devsecops/assets/108774198/14b9e5a5-007d-4c2a-99ca-62d72aaa6dc9)
 
 ![image](https://github.com/yangmz0528/sctp4-gp2-capstone-devsecops/assets/108774198/14b9e5a5-007d-4c2a-99ca-62d72aaa6dc9)
